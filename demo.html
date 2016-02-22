@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <style>
+            html {
+                height: 100px;
+                width: 100px;
+            }
+            body {
+                background: green;
+                width: 100px;
+                height: 100px;
+            }
+        </style>
+        <script src='bower_components/requirejs/require.js'></script>
+        <script>
+            window.seleniumConfig = {
+                endpoint: 'http://localhost:4444/wd/hub/session/79445e81-f44b-4401-b662-e6d002f0ebb5'
+            };
+
+            require.config({
+                paths: {
+                    'jquery': 'bower_components/jquery/dist/jquery'
+                }
+            });
+
+            function rgbToHex(r, g, b) {
+                if (r > 255 || g > 255 || b > 255)
+                    throw "Invalid color component";
+                return ((r << 16) | (g << 8) | b).toString(16);
+            }
+
+            require(['selenium-loopback.js'], function(selenium) {
+                selenium.canvas().then(function(context) {
+                    var p = context.getImageData(10, 10, 1, 1).data;
+                    var hex = "#" + ("000000" + rgbToHex(p[0], p[1], p[2])).slice(-6);
+                    alert(hex);
+                });
+            });
+        </script>
+    </head>
+    <body>
+        
+    </body>
+</html>
