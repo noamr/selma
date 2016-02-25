@@ -120,21 +120,45 @@ define(['selenium'], function(browser) {
         it("should move to an element using moveBy and make sure it is hovered", function(done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<div style="width: 100px; height: 100px; top: 0; left: 0; position: absolute" onMouseEnter="this.style.background=\'green\';"></div>';
-            browser.moveBy(50, 50).then(function() {
-                return browser.canvas();
-            }).then(function(ctx) {
-                expect(ctx.pixelAt(30, 54)).toEqual(ctx.color('green'));
-                done();
-            });
+            browser.moveBy(50, 50)
+                .then(browser.canvas)
+                .then(function(ctx) {
+                    expect(ctx.pixelAt(30, 54)).toEqual(ctx.color('green'));
+                    done();
+                });
         });
 
         it("should move to an element using moveToElement and make sure it is hovered", function(done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<div style="width: 100px; height: 100px; top: 100px; left: 0; position: absolute" onMouseEnter="this.style.background=\'green\';"></div>';
-            browser.element().byTagName('DIV').then(function(element) {
-                browser.moveToElement(element).then(function() {
-                    return browser.canvas();
-                }).then(function(ctx) {
+            browser.element().byTagName('DIV')
+                .then(browser.moveToElement)
+                .then(browser.canvas)
+                .then(function(ctx) {
+                    expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
+                    done();
+                });
+        });
+
+        it("should set the background to green on a link click and verify it is green", function (done) {
+            document.body.style.background = "red";
+            document.body.innerHTML = '<a onclick="document.body.style.background=\'green\'" id="a">HELLO</a>';
+            browser.element().byId('a')
+            .then(function(element) {
+                return element.click();
+            }).then(browser.wait(500))
+            .then(browser.canvas)
+            .then(function(ctx) {
+                expect(ctx.pixelAt(100, 100)).toEqual(ctx.color("green"));
+                done();
+            });
+        });
+
+        it("should change the backround to green on mouse down", function (done) {
+            document.body.style.background = "red";
+            document.body.innerHTML = '<a onmousedown="document.body.style.background=\'green\'" id="a">HELLO</a>';
+            browser.element().byId('a').then(function (element) {
+                browser.moveToElement(element).then(browser.buttonDown).then(browser.canvas).then(function (ctx) {
                     expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
                     done();
                 });
@@ -142,19 +166,20 @@ define(['selenium'], function(browser) {
             });
         });
 
-        it("should set the background to green on a link click and verify it is green", function (done) {
+        it("should change the backround to green on mouse up", function (done) {
             document.body.style.background = "red";
-            document.body.innerHTML = '<a onclick="document.body.style.background=\'green\'" id="a">HELLO</a>';
-            var p = browser.element().byId('a').then(function(element) {
-                element.click().then(function() {
-                    setTimeout(function() {
-                        browser.canvas().then(function(ctx) {
-                            expect(ctx.pixelAt(100, 100)).toEqual(ctx.color("green"));
-                            done();
-                        });
+            document.body.innerHTML = '<a onmouseup="document.body.style.background=\'green\'" id="a">HELLO</a>';
+            browser.element().byId('a').then(function (element) {
+                browser.moveToElement(element)
+                    .then(browser.buttonDown)
+                    .then(browser.wait(500))
+                    .then(browser.buttonUp)
+                    .then(browser.canvas)
+                    .then(function (ctx) {
+                        expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
+                        done();
+                    });
 
-                    }, 500);
-                });
             });
         });
     });
