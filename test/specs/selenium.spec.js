@@ -15,7 +15,7 @@ define(['selenium'], function(browser) {
         it("should set the background to green and verify it is green", function (done) {
             document.body.style.background = "green";
             browser.canvas().then(function(ctx) {
-                expect([].slice.call(ctx.getImageData(100, 100, 1, 1).data)).toEqual([0, 128, 0, 255]);
+                expect(ctx.pixelAt(100, 100)).toEqual(ctx.color('green'));
                 done();
             });
         });
@@ -123,19 +123,19 @@ define(['selenium'], function(browser) {
             browser.moveBy(50, 50).then(function() {
                 return browser.canvas();
             }).then(function(ctx) {
-                expect([].slice.call(ctx.getImageData(50, 50, 1, 1).data)).toEqual([0, 128, 0, 255]);
+                expect(ctx.pixelAt(30, 54)).toEqual(ctx.color('green'));
                 done();
             });
         });
 
-        fit("should move to an element using moveToElement and make sure it is hovered", function(done) {
+        it("should move to an element using moveToElement and make sure it is hovered", function(done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<div style="width: 100px; height: 100px; top: 100px; left: 0; position: absolute" onMouseEnter="this.style.background=\'green\';"></div>';
             browser.element().byTagName('DIV').then(function(element) {
                 browser.moveToElement(element).then(function() {
                     return browser.canvas();
                 }).then(function(ctx) {
-                    expect([].slice.call(ctx.getImageData(50, 150, 1, 1).data)).toEqual([0, 128, 0, 255]);
+                    expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
                     done();
                 });
 
@@ -149,7 +149,7 @@ define(['selenium'], function(browser) {
                 element.click().then(function() {
                     setTimeout(function() {
                         browser.canvas().then(function(ctx) {
-                            expect([].slice.call(ctx.getImageData(100, 100, 1, 1).data)).toEqual([0, 128, 0, 255]);
+                            expect(ctx.pixelAt(100, 100)).toEqual(ctx.color("green"));
                             done();
                         });
 
