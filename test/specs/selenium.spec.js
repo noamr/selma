@@ -8,16 +8,14 @@ define(['selenium'], function(browser) {
             document.title = "some title";
             browser.title().then(function(title) {
                 expect(title).toEqual("some title");
-                done();
-            });
+            }).then(done);
         });
 
         it("should set the background to green and verify it is green", function (done) {
             document.body.style.background = "green";
             browser.canvas().then(function(ctx) {
                 expect(ctx.pixelAt(100, 100)).toEqual(ctx.color('green'));
-                done();
-            });
+            }).then(done);
         });
 
         it("should create an element and get it by id", function(done) {
@@ -25,8 +23,7 @@ define(['selenium'], function(browser) {
             browser.element().byId('something').then(function(e) {
                 e.text().then(function(text) {
                     expect(text).toEqual('ABC');
-                    done();
-                });
+                }).then(done);
             });
         });
 
@@ -35,8 +32,7 @@ define(['selenium'], function(browser) {
             browser.element().byTagName('h1').then(function(e) {
                 e.text().then(function(text) {
                     expect(text).toEqual('ABC');
-                    done();
-                });
+                }).then(done);
             });
         });
 
@@ -45,8 +41,7 @@ define(['selenium'], function(browser) {
             browser.element().byClass('myClass').then(function(e) {
                 e.text().then(function(text) {
                     expect(text).toEqual('ABC');
-                    done();
-                });
+                }).then(done);
             });
         });
 
@@ -55,8 +50,7 @@ define(['selenium'], function(browser) {
             browser.element().byCss('h4.myClass[attr~="a"]').then(function(e) {
                 e.text().then(function(text) {
                     expect(text).toEqual('ABC');
-                    done();
-                });
+                }).then(done);
             });
         });
 
@@ -65,8 +59,7 @@ define(['selenium'], function(browser) {
             browser.element().byName('someName').then(function(e) {
                 e.text().then(function(text) {
                     expect(text).toEqual('ABCD');
-                    done();
-                });
+                }).then(done);
             });
         });
 
@@ -75,8 +68,7 @@ define(['selenium'], function(browser) {
             browser.element().byLinkText('ABCD').then(function(e) {
                 e.tag().then(function(tag) {
                     expect(tag).toEqual('a');
-                    done();
-                });
+                }).then(done);
             });
         });
 
@@ -85,8 +77,7 @@ define(['selenium'], function(browser) {
             browser.element().byPartialLinkText('ABC').then(function(e) {
                 e.tag().then(function(tag) {
                     expect(tag).toEqual('a');
-                    done();
-                });
+                }).then(done);
             });
         });
 
@@ -94,93 +85,96 @@ define(['selenium'], function(browser) {
             document.body.innerHTML = '<a id="a">ABCD</a><a id="b">123</a>';
             browser.elements().byTagName('a').then(function(elements) {
                 expect(elements.length).toBe(2);
-                done();
-            });
+            }).then(done);
         });
 
         it("should try to find a non-existing element and get null", function(done) {
             document.body.innerHTML = '<h4>ABC</h4>';
             browser.element().byId('nothing').then(function(e) {
                 expect(e).toBeFalsy();
-                done();
-            });
+            }).then(done);
         });
 
         it("should focus an element and return it as an active element", function(done) {
             document.body.innerHTML = '<a href="#" id="a">A</a>';
             document.querySelector('a').focus();
-            browser.active().then(function(e) {
+            browser
+              .active()
+              .then(function(e) {
                 return e.tag();
-            }).then(function(tag) {
-                expect(tag).toEqual('a');
-                done();
-            });;
+              })
+              .then(function(tag) {
+                  expect(tag).toEqual('a');
+              })
+              .then(done);
         });
 
         it("should move to an element using moveBy and make sure it is hovered", function(done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<div style="width: 100px; height: 100px; top: 0; left: 0; position: absolute" onMouseEnter="this.style.background=\'green\';"></div>';
             browser.moveBy(50, 50)
-                .then(browser.canvas)
+                .canvas(100, 100)
                 .then(function(ctx) {
                     expect(ctx.pixelAt(30, 54)).toEqual(ctx.color('green'));
-                    done();
-                });
+                })
+                .then(done);
         });
 
         it("should move to an element using moveToElement and make sure it is hovered", function(done) {
             document.body.style.background = "red";
-            document.body.innerHTML = '<div style="width: 100px; height: 100px; top: 100px; left: 0; position: absolute" onMouseEnter="this.style.background=\'green\';"></div>';
-            browser.element().byTagName('DIV')
-                .then(browser.moveToElement)
-                .then(browser.canvas)
+            document.body.innerHTML = '<div id="a" style="width: 100px; height: 100px; top: 100px; position: absolute" onMouseEnter="this.style.background=\'green\';"></div>';
+            browser
+                .element().byTagName('DIV')
+                  .then(browser.moveToElement)
+                .canvas(200, 300)
                 .then(function(ctx) {
                     expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
-                    done();
-                });
+                })
+                .then(done);
         });
 
         it("should set the background to green on a link click and verify it is green", function (done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<a onclick="document.body.style.background=\'green\'" id="a">HELLO</a>';
-            browser.element().byId('a')
-            .then(function(element) {
-                return element.click();
-            }).then(browser.wait(500))
-            .then(browser.canvas)
-            .then(function(ctx) {
-                expect(ctx.pixelAt(100, 100)).toEqual(ctx.color("green"));
-                done();
-            });
+            browser
+              .element().byId('a')
+                .then(browser.click)
+              .canvas()
+              .then(function(ctx) {
+                  expect(ctx.pixelAt(100, 100)).toEqual(ctx.color("green"));
+              })
+              .then(done);
         });
 
         it("should change the backround to green on mouse down", function (done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<a onmousedown="document.body.style.background=\'green\'" id="a">HELLO</a>';
-            browser.element().byId('a').then(function (element) {
-                browser.moveToElement(element).then(browser.buttonDown).then(browser.canvas).then(function (ctx) {
-                    expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
-                    done();
-                });
-
-            });
+            browser
+              .element().byId('a')
+                .then(browser.moveToElement)
+              .buttonDown()
+              .canvas(100, 200)
+              .then(function (ctx) {
+                  expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
+              })
+              .then(done);
         });
 
         it("should change the backround to green on mouse up", function (done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<a onmouseup="document.body.style.background=\'green\'" id="a">HELLO</a>';
-            browser.element().byId('a').then(function (element) {
-                browser.moveToElement(element)
-                    .then(browser.buttonDown)
-                    .then(browser.wait(500))
-                    .then(browser.buttonUp)
-                    .then(browser.canvas)
-                    .then(function (ctx) {
-                        expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
-                        done();
-                    });
 
-            });
+            browser
+                .element()
+                  .byId('a')
+                    .then(browser.moveToElement)
+                  .buttonDown()
+                  .buttonUp()
+                  .canvas(100, 200)
+                  .then(function(ctx) {
+                      expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
+                  })
+                  .then(done);
         });
     });
 });
