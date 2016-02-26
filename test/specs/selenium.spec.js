@@ -160,6 +160,34 @@ define(['selenium'], function(browser) {
               .then(done);
         });
 
+
+        it("should set keys to a text input", function (done) {
+            document.body.innerHTML = '<input type="text" id="input" />';
+            browser
+              .element().byId('input')
+              .then(function(e) {
+                return e.keys(['a', 'b', 'c']).then(function() {
+                  return e.attribute("value").then(function(text) {
+                    expect(text).toEqual('abc');
+                  });
+
+                });
+              })
+              .then(done);
+        });
+        it("should set keys to the focused text input", function (done) {
+            document.body.innerHTML = '<input type="text" id="input" />';
+            document.getElementById('input').focus();
+            browser
+              .keys(['a', 'b', 'c'])
+              .element().byId('input')
+              .then(function(e) {
+                  return e.attribute("value").then(function(text) {
+                    expect(text).toEqual('abc');
+                  });
+              })
+              .then(done);
+        });
         it("should change the backround to green on mouse up", function (done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<a onmouseup="document.body.style.background=\'green\'" id="a">HELLO</a>';
