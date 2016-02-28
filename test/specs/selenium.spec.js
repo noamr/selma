@@ -188,6 +188,7 @@ define(['selenium'], function(browser) {
               })
               .then(done);
         });
+
         it("should change the backround to green on mouse up", function (done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<a onmouseup="document.body.style.background=\'green\'" id="a">HELLO</a>';
@@ -203,6 +204,32 @@ define(['selenium'], function(browser) {
                       expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
                   })
                   .then(done);
+        });
+
+        it("should get a sub element", function (done) {
+            document.body.innerHTML = '<div id="a"><div id="b">ABC</div></div>';
+            browser
+              .element().byId('a')
+              .then(function(e) {
+                return e.element().byId('b').then(function(e) {
+                  return e.text().then(function(text) {
+                    expect(text).toEqual('ABC');
+                  })
+                });
+              })
+              .then(done);
+        });
+
+        it("should get multiple sub elements", function (done) {
+            document.body.innerHTML = '<div id="a"><div id="b">ABC</div><div id="c">C</div></div><div id="d">D</D>';
+            browser
+              .element().byId('a')
+              .then(function(e) {
+                return e.elements().byTagName('DIV').then(function(e) {
+                    expect(e.length).toEqual(2);
+                });
+              })
+              .then(done);
         });
     });
 });
