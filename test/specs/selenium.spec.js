@@ -255,7 +255,7 @@ define(['selenium'], function(browser) {
         });
 
         it("should check that an element is enabled", function(done) {
-            document.body.innerHTML = '<input id="a" type="text"></p>';
+            document.body.innerHTML = '<input id="a" type="text"></input>';
             browser.element().byId('a').then(function(e) {
                 e.enabled().then(function(en) {
                     expect(en).toBeTruthy();
@@ -266,6 +266,21 @@ define(['selenium'], function(browser) {
                   return Promise.resolve();
                 }).then(done);
             });
+        });
+
+        fit("should check that an element is displayed", function(done) {
+            document.body.innerHTML = '<div id="a" type="text">A</div><div id="b" style="opacity: 0">B</div>';
+            browser.element().byId('a').then(function(e) {
+                return e.displayed();
+            }).then(function(en) {
+              expect(en).toBeTruthy();
+              return browser.element().byId('b');
+            }).then(function(b) {
+              return b.displayed();
+            }).then(function(en) {
+              expect(en).toBeFalsy();
+              return Promise.resolve();
+            }).then(done);
         });
 
         it("should check element equality", function(done) {
