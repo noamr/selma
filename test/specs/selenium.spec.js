@@ -232,7 +232,7 @@ define(['selenium'], function(browser) {
               .then(done);
         });
 
-        fit("should select and unselect a checkbox", function(done) {
+        it("should select a checkbox after it was unselected", function(done) {
           var cb = document.createElement("INPUT");
           cb.setAttribute("type", "checkbox");
           cb.setAttribute("id", "cb");
@@ -240,17 +240,51 @@ define(['selenium'], function(browser) {
           browser
               .element().byId('cb')
                 .then(function(cb) {
-                  return cb.selected()
-                  .then(function(isSelected) {
-                    expect(isSelected).toBeFalsy();
-                    return cb.click();
-                  }).then(function() {
-                    return cb.selected();
-                  }).then(function(s) {
-                    expect(s).toBeTruthy();
-                    return Promise.resolve();
-                  });
+                  return cb
+                    .selected()
+                    .then(function(isSelected) {
+                      expect(isSelected).toBeFalsy();
+                      return cb.click();
+                    }).then(function() {
+                      return cb.selected();
+                    }).then(function(s) {
+                      expect(s).toBeTruthy();
+                      return Promise.resolve();
+                    });
               }).then(done);
         });
+
+        it("should check that an element is enabled", function(done) {
+            document.body.innerHTML = '<input id="a" type="text"></p>';
+            browser.element().byId('a').then(function(e) {
+                e.enabled().then(function(en) {
+                    expect(en).toBeTruthy();
+                    document.getElementById('a').setAttribute('disabled', 'disabled');
+                    return e.enabled();
+                }).then(function(en) {
+                  expect(en).toBeFalsy();
+                  return Promise.resolve();
+                }).then(done);
+            });
+        });
+
+        it("should check element equality", function(done) {
+          document.body.innerHTML = "<div id='a'>ABC</div><div id='c'>D</div>";
+          browser
+            .element().byId("a")
+            .then(function(a) {
+              return browser.element().byTagName("DIV").then(function(b) {
+                return a.equals(b);
+              }).then(function(ie) {
+                expect(ie).toBeTruthy();
+                return browser.element().byId("c");
+              }).then(function(c) {
+                return (a.equals(c)).then(function(ie) {
+                  expect(ie).toBeFalsy();
+                  return Promise.resolve();
+                })
+              });
+            }).then(done);
+        })
     });
 });
