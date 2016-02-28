@@ -146,6 +146,19 @@ define(['selenium'], function(browser) {
               .then(done);
         });
 
+        it("should set the background to green on a link double-click and verify it is green", function (done) {
+            document.body.style.background = "red";
+            document.body.innerHTML = '<a ondblclick="document.body.style.background=\'green\'" id="a">HELLO</a>';
+            browser
+              .element().byId('a')
+                .then(browser.doubleClick)
+              .canvas()
+              .then(function(ctx) {
+                  expect(ctx.pixelAt(100, 100)).toEqual(ctx.color("green"));
+              })
+              .then(done);
+        });
+
         it("should change the backround to green on mouse down", function (done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<a onmousedown="document.body.style.background=\'green\'" id="a">HELLO</a>';
@@ -175,6 +188,22 @@ define(['selenium'], function(browser) {
               })
               .then(done);
         });
+
+        it("should clear a text input", function (done) {
+            document.body.innerHTML = '<input type="text" value="abc" id="input" />';
+            browser
+              .element().byId('input')
+              .then(function(e) {
+                return e.clear().then(function() {
+                  return e.attribute("value").then(function(text) {
+                    expect(text).toEqual('');
+                  });
+
+                });
+              })
+              .then(done);
+        });
+
         it("should set keys to the focused text input", function (done) {
             document.body.innerHTML = '<input type="text" id="input" />';
             document.getElementById('input').focus();
@@ -303,6 +332,16 @@ define(['selenium'], function(browser) {
             }).then(done);
         });
 
+        it("should check element computed style", function(done) {
+            document.body.innerHTML = '<style>#a{ background: green}</style><div id="a" style="position: absolute; width: 200px; height: 150px; display: block">&nbsp;</div>';
+            browser.element().byId('a').then(function(e) {
+                return e.css('background-color');
+            }).then(function(color) {
+              expect(color).toEqual('rgba(0, 128, 0, 1)');
+              return Promise.resolve();
+            }).then(done);
+        });
+
         it("should check element equality", function(done) {
           document.body.innerHTML = "<div id='a'>ABC</div><div id='c'>D</div>";
           browser
@@ -320,6 +359,14 @@ define(['selenium'], function(browser) {
                 })
               });
             }).then(done);
-        })
+        });
+
+        it("should submit a form", function(done) {
+          var form = document.createElement("FORM");
+          form.addEventListener("submit", done);
+          form.innerHTML = '<input type="text" id="a" />';
+          document.body.appendChild(form);
+          browser.element().byId('a').then(function(a) { return a.submit(); });
+        });
     });
 });
