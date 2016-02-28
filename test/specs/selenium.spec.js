@@ -268,7 +268,7 @@ define(['selenium'], function(browser) {
             });
         });
 
-        fit("should check that an element is displayed", function(done) {
+        it("should check that an element is displayed", function(done) {
             document.body.innerHTML = '<div id="a" type="text">A</div><div id="b" style="opacity: 0">B</div>';
             browser.element().byId('a').then(function(e) {
                 return e.displayed();
@@ -279,6 +279,26 @@ define(['selenium'], function(browser) {
               return b.displayed();
             }).then(function(en) {
               expect(en).toBeFalsy();
+              return Promise.resolve();
+            }).then(done);
+        });
+
+        it("should check element location", function(done) {
+            document.body.innerHTML = '<div id="a" type="text" style="position: absolute; left: 100px; top: 10px; display: block">&nbsp;</div>';
+            browser.element().byId('a').then(function(e) {
+                return e.location();
+            }).then(function(loc) {
+              expect(loc).toEqual({x: 100, y: 10});
+              return Promise.resolve();
+            }).then(done);
+        });
+
+        it("should check element size", function(done) {
+            document.body.innerHTML = '<div id="a" type="text" style="position: absolute; width: 200px; height: 150px; display: block">&nbsp;</div>';
+            browser.element().byId('a').then(function(e) {
+                return e.size();
+            }).then(function(loc) {
+              expect(loc).toEqual({width: 200, height: 150});
               return Promise.resolve();
             }).then(done);
         });
