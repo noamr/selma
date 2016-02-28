@@ -231,5 +231,26 @@ define(['selenium'], function(browser) {
               })
               .then(done);
         });
+
+        fit("should select and unselect a checkbox", function(done) {
+          var cb = document.createElement("INPUT");
+          cb.setAttribute("type", "checkbox");
+          cb.setAttribute("id", "cb");
+          document.body.appendChild(cb);
+          browser
+              .element().byId('cb')
+                .then(function(cb) {
+                  return cb.selected()
+                  .then(function(isSelected) {
+                    expect(isSelected).toBeFalsy();
+                    return cb.click();
+                  }).then(function() {
+                    return cb.selected();
+                  }).then(function(s) {
+                    expect(s).toBeTruthy();
+                    return Promise.resolve();
+                  });
+              }).then(done);
+        });
     });
 });
