@@ -8,7 +8,7 @@ window.onerror = function(e) {
 
 requirejs.config({
     paths: {
-        'selenium': '/base/lib/selma/selenium-loopback'
+        'selma': '/base/lib/selma/selma-client'
     },
     deps: tests,
     callback: window.__karma__.start

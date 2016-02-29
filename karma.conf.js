@@ -9,7 +9,7 @@ module.exports = function(config) {
     basePath: '',
 
     plugins: [
-        require('./lib/selma/karma-wdio.js'), 'karma-jasmine', 'karma-requirejs', 'karma-jquery', 'karma-chrome-launcher'
+        require('./lib/selma/karma-selma-plugin'), 'karma-jasmine', 'karma-requirejs', 'karma-jquery', 'karma-chrome-launcher'
     ],
 
     middleware: [
@@ -40,6 +40,14 @@ module.exports = function(config) {
         config: {
           desiredCapabilities: {
             browserName: 'chrome'
+          }
+        }
+      },
+      'swd_firefox': {
+        base: 'WebdriverIO',
+        config: {
+          desiredCapabilities: {
+            browserName: 'firefox'
           }
         }
       },

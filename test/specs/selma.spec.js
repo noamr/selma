@@ -1,4 +1,4 @@
-define(['selenium'], function(browser) {
+define(['selma'], function(browser) {
     describe("Browser API", function() {
         beforeEach(function() {
             document.body.outerHTML = "<BODY/>";
@@ -142,12 +142,12 @@ define(['selenium'], function(browser) {
             browser
               .element().byId('a')
                 .then(browser.moveToElement)
-              .buttonDown()
+              .mouseDown()
               .canvas(100, 200)
               .then(function (ctx) {
                   expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
               })
-              .then(done);
+              .then(done).then(browser.mouseUp);
         });
 
 
@@ -203,8 +203,9 @@ define(['selenium'], function(browser) {
                 .element()
                   .byId('a')
                     .then(browser.moveToElement)
-                  .buttonDown()
-                  .buttonUp()
+                  .mouseDown()
+                  .flush()
+                  .mouseUp()
                   .canvas(100, 200)
                   .then(function(ctx) {
                       expect(ctx.pixelAt(50, 150)).toEqual(ctx.color("green"));
@@ -250,7 +251,9 @@ define(['selenium'], function(browser) {
                     .selected()
                     .then(function(isSelected) {
                       expect(isSelected).toBeFalsy();
-                      return cb.click();
+                      return browser.moveToElement(cb);
+                    }).then(function() {
+                      return browser.click();
                     }).then(function() {
                       return cb.selected();
                     }).then(function(s) {
