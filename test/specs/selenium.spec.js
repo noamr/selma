@@ -109,17 +109,6 @@ define(['selenium'], function(browser) {
               .then(done);
         });
 
-        it("should move to an element using moveBy and make sure it is hovered", function(done) {
-            document.body.style.background = "red";
-            document.body.innerHTML = '<div style="width: 100px; height: 100px; top: 0; left: 0; position: absolute" onMouseEnter="this.style.background=\'green\';"></div>';
-            browser.moveBy(50, 50)
-                .canvas(100, 100)
-                .then(function(ctx) {
-                    expect(ctx.pixelAt(30, 54)).toEqual(ctx.color('green'));
-                })
-                .then(done);
-        });
-
         it("should move to an element using moveToElement and make sure it is hovered", function(done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<div id="a" style="width: 100px; height: 100px; top: 100px; position: absolute" onMouseEnter="this.style.background=\'green\';"></div>';
@@ -133,25 +122,13 @@ define(['selenium'], function(browser) {
                 .then(done);
         });
 
-        it("should set the background to green on a link click and verify it is green", function (done) {
-            document.body.style.background = "red";
-            document.body.innerHTML = '<a onclick="document.body.style.background=\'green\'" id="a">HELLO</a>';
-            browser
-              .element().byId('a')
-                .then(browser.click)
-              .canvas()
-              .then(function(ctx) {
-                  expect(ctx.pixelAt(100, 100)).toEqual(ctx.color("green"));
-              })
-              .then(done);
-        });
-
         it("should set the background to green on a link double-click and verify it is green", function (done) {
             document.body.style.background = "red";
             document.body.innerHTML = '<a ondblclick="document.body.style.background=\'green\'" id="a">HELLO</a>';
             browser
               .element().byId('a')
-                .then(browser.doubleClick)
+                .then(browser.moveToElement)
+              .doubleClick()
               .canvas()
               .then(function(ctx) {
                   expect(ctx.pixelAt(100, 100)).toEqual(ctx.color("green"));
@@ -368,5 +345,35 @@ define(['selenium'], function(browser) {
           document.body.appendChild(form);
           browser.element().byId('a').then(function(a) { return a.submit(); });
         });
+
+        xit("should move to an element using moveBy and make sure it is hovered", function(done) {
+            document.body.style.background = "red";
+            document.body.innerHTML = '<div style="width: 100px; height: 100px; top: 0; left: 0; position: absolute" onMouseEnter="this.style.background=\'green\';"></div>';
+            browser.moveBy(50, 50)
+                .canvas(100, 100)
+                .then(function(ctx) {
+                    expect(ctx.pixelAt(30, 54)).toEqual(ctx.color('green'));
+                })
+                .then(done);
+        });
+
+        describe("with touch", function() {
+          xit("should set the background to green on a link click and verify it is green", function (done) {
+              document.body.style.background = "red";
+              document.body.innerHTML = '<a onclick="document.body.style.background=\'green\'" id="a">HELLO</a>';
+              browser
+                .element().byId('a')
+                  .then(function(a) {
+                    return a.tap();
+                  }).then(function() {
+                    return browser.canvas()
+                    .then(function(ctx) {
+                        expect(ctx.pixelAt(100, 100)).toEqual(ctx.color("green"));
+                        return Promise.resolve();
+                    })
+                  })
+                .then(done);
+          });
+        })
     });
 });

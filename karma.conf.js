@@ -12,6 +12,10 @@ module.exports = function(config) {
         require('./lib/selma/karma-wdio.js'), 'karma-jasmine', 'karma-requirejs', 'karma-jquery', 'karma-chrome-launcher'
     ],
 
+    middleware: [
+      'selmaProxy'
+    ],
+
     client: {
       useIframe: false
     },
@@ -38,13 +42,27 @@ module.exports = function(config) {
             browserName: 'chrome'
           }
         }
+      },
+      'swd_chrome_nexus_emu': {
+        base: 'WebdriverIO',
+        config: {
+          desiredCapabilities: {
+            browserName: 'chrome',
+            rotatable: true,
+            chromeOptions: {
+              mobileEmulation: {
+                deviceMetrics: { "width": 360, "height": 640, "pixelRatio": 3.0 },
+                "userAgent": "Mozilla/5.0 (Linux; Android 4.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"
+              }
+            }
+          }
+        }
       }
     },
 
     // list of files to exclude
     exclude: [
     ],
-
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
