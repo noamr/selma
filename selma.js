@@ -224,6 +224,6 @@ function defineSelma() {
 if (typeof(requirejs) !== "undefined") {
 	define([], defineSelma);
 } else {
-	defineSelma();
+	window.selma = defineSelma();
 }
 })();
