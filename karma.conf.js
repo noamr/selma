@@ -9,12 +9,10 @@ module.exports = function(config) {
     basePath: '',
 
     plugins: [
-        require('./lib/selma/karma-selma-plugin'), 'karma-jasmine', 'karma-requirejs', 'karma-jquery', 'karma-chrome-launcher'
+        require('./index.js'), 'karma-jasmine', 'karma-requirejs', 'karma-jquery', 'karma-chrome-launcher'
     ],
 
-    middleware: [
-      'selmaProxy'
-    ],
+    middleware: ['selma'],
 
     client: {
       useIframe: false
@@ -23,20 +21,19 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['jasmine', 'requirejs', 'jquery-1.8.3'],
+    frameworks: ['jasmine', 'requirejs', 'jquery-1.8.3', 'selma'],
 
 
     // list of files / patterns to load in the browser
     files: [
       'test-main.js',
-      {pattern:'test/**/*.spec.js', included: false},
-      {pattern: 'lib/**/*.js', included: false},
+      {pattern:'test/**/*.spec.js', included: false}
     ],
 
     // define browsers
     customLaunchers: {
       'swd_chrome': {
-        base: 'WebdriverIO',
+        base: 'selma',
         config: {
           desiredCapabilities: {
             browserName: 'chrome'
@@ -44,7 +41,7 @@ module.exports = function(config) {
         }
       },
       'swd_firefox': {
-        base: 'WebdriverIO',
+        base: 'selma',
         config: {
           desiredCapabilities: {
             browserName: 'firefox'
@@ -52,7 +49,7 @@ module.exports = function(config) {
         }
       },
       'swd_chrome_nexus_emu': {
-        base: 'WebdriverIO',
+        base: 'selma',
         config: {
           desiredCapabilities: {
             browserName: 'chrome',

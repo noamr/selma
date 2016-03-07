@@ -221,7 +221,7 @@ function defineSelma() {
 	return Selenium(Promise.resolve());
 }
 
-if (requirejs) {
+if (typeof(requirejs) !== "undefined") {
 	define([], defineSelma);
 } else {
 	defineSelma();

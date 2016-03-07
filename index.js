@@ -1,7 +1,8 @@
 var webdriverio = require('webdriverio'),
     merge = require('deepmerge'),
     http = require('http'),
-    URL = require('url');
+    URL = require('url'),
+    path = require('path');
 
 var defaultOptions = {
     desiredCapabilities: {},
@@ -45,7 +46,7 @@ var SelmaProxy = function(args, config) {
 }
 
 
-var WebdriverIOLauncher = function (baseBrowserDecorator, args, logger, config) {
+var SelmaWDIOLauncher = function (baseBrowserDecorator, args, logger, config) {
     var log = logger.create('webdriverio'),
         self = this;
 
@@ -97,9 +98,20 @@ var WebdriverIOLauncher = function (baseBrowserDecorator, args, logger, config) 
     };
 };
 
-WebdriverIOLauncher.$inject = ['baseBrowserDecorator', 'args', 'logger'];
+SelmaWDIOLauncher.$inject = ['baseBrowserDecorator', 'args', 'logger'];
+
+function createPattern(path) {
+  return {pattern: path, included: true, served: true, watched: false};
+};
+
+function selmaFramework(files) {
+    files.unshift(createPattern(path.join(__dirname, 'selma-client.js')));
+}
+
+selmaFramework.$inject = ['config.files'];
 
 module.exports = {
-  'middleware:selmaProxy': ['factory', SelmaProxy],
-  'launcher:WebdriverIO': ['type', WebdriverIOLauncher]
+  'middleware:selma': ['factory', SelmaProxy],
+  'launcher:selma': ['type', SelmaWDIOLauncher],
+  'framework:selma': ['factory', selmaFramework]
 };
