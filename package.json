@@ -20,6 +20,6 @@
   },
   "devDependencies": {
     "karma": "^0.13.21",
-    "karma-jasmine": "^0.3.7",
+    "karma-jasmine": "^0.3.7"
   }
 }
