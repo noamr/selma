@@ -18,14 +18,14 @@ function getBrowserInfo(launcher) {
 var SelmaProxy = function(args, config) {
   return function(request, response, next) {
     var path = /^\/selma\/(.*)/.exec(request.url);
-    var cookie = /\bseleniumEndpoint=(.*)\b/.exec(request.headers.cookie);
+    var cookie = /\bseleniumEndpoint=([A-Za-z0-9\-%.]*)\b/.exec(request.headers.cookie);
     if (!path || path.length < 2 || !cookie || cookie.length < 2) {
       next();
       return;
     }
 
     path = path[1];
-    endpoint = cookie[1];
+    endpoint = decodeURIComponent(cookie[1]);
     path = endpoint + "/" + path;
     var opt = URL.parse(path);
     opt.method = request.method;
@@ -73,7 +73,7 @@ var SelmaWDIOLauncher = function (baseBrowserDecorator, args, logger, config) {
             .remote(self.options)
             .init()
             .then(function(session) {
-                seleniumEndpoint = 'http://' + self.options.host + ':' + self.options.port + '/wd/hub/session/' + session.sessionId;
+                seleniumEndpoint = encodeURIComponent('http://' + self.options.host + ':' + self.options.port + '/wd/hub/session/' + session.sessionId);
                 self.browser.url(url, function (err, response) {
                     if (err) {
                         log.error('An error occurred while loading the url with %s. Status code: %s. %s', browserInfo, err.status, err.message);
