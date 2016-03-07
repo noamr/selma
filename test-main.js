@@ -8,7 +8,7 @@ window.onerror = function(e) {
 
 requirejs.config({
     paths: {
-        'selma': '/base/selma-client'
+        'selma': '/base/selma'
     },
     deps: tests,
     callback: window.__karma__.start

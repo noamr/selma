@@ -105,7 +105,7 @@ function createPattern(path) {
 };
 
 function selmaFramework(files) {
-    files.unshift(createPattern(path.join(__dirname, 'selma-client.js')));
+    files.unshift(createPattern(path.join(__dirname, 'selma.js')));
 }
 
 selmaFramework.$inject = ['config.files'];
